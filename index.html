@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="bs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GAMA Learn — graf znanja za agente</title>
+<link rel="icon" href="data:,">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0e1624">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<canvas id="graph"></canvas>
+
+<header>
+  <div class="brand">
+    <h1>GAMA LEARN</h1>
+    <div class="sub">Uči agente · klikni čvor · napiši šta želiš da nauče</div>
+  </div>
+  <div class="rightcol">
+    <div class="agent-box">
+      <label for="agent">AGENT</label>
+      <select id="agent">
+        <option>opencode</option>
+        <option>claude</option>
+        <option>codex</option>
+        <option>gemini</option>
+        <option>deepseek</option>
+        <option>qwen</option>
+      </select>
+      <div class="progress" id="progress">—</div>
+    </div>
+    <div class="actions">
+      <button class="hbtn" id="plan" title="brain bira 6 čvorova (P)">Plan</button>
+      <button class="hbtn primary" id="next" title="sledeći čvor za učenje (N)">▶ Sledeće</button>
+      <button class="hbtn" id="research" title="OpenAlex + arXiv (R)">Istraži</button>
+      <button class="hbtn" id="tools" title="mini alati (T)">Alati</button>
+      <button class="hbtn" id="powers" title="moći, hackovi, besplatno (M)">Moći</button>
+      <button class="hbtn" id="catalog" title="katalog 4498 skillova/alata (K)">Katalog</button>
+      <button class="hbtn" id="digest" title="dnevni digest (D)">Digest</button>
+      <button class="hbtn" id="stream" style="display:none" title="GAMA Stream (8077)">Stream</button>
+      <button class="hbtn" id="tokens" style="display:none" title="Tokeni + audit">Tokeni</button>
+      <button class="hbtn" id="review" title="Spaced repetition">Ponavljanje</button>
+      <button class="hbtn" id="fleet" title="Fleet dashboard">Fleet</button>
+      <button class="hbtn" id="bench" title="20-skill benchmark">Bench</button>
+      <button class="hbtn" id="live" title="Sentinel live log">Live</button>
+      <button class="hbtn" id="fixes" title="Skill fix draftovi">Fixevi</button>
+      <button class="hbtn" id="alerts" title="Alerti">Alerti<span id="alertsBadge" style="display:none"></span></button>
+      <button class="hbtn" id="install" style="display:none" title="Instaliraj GAMA Learn">Instaliraj</button>
+    </div>
+  </div>
+</header>
+
+<div class="searchwrap">
+  <input class="search" id="q" autocomplete="off" spellcheck="false"
+         placeholder="I want to learn…">
+  <div class="hits" id="hits"></div>
+</div>
+
+<aside class="side" id="side">
+  <div class="side-head">
+    <div class="kind" id="k-kind">čvor</div>
+    <h2 id="k-title">—</h2>
+    <div class="ref" id="k-ref"></div>
+  </div>
+  <div class="side-body" id="k-body">
+    <div class="doc" id="k-doc">Učitavam…</div>
+    <div class="curric" id="k-curric"></div>
+    <div class="related" id="k-related"></div>
+  </div>
+  <div class="side-foot">
+    <div class="footrow">
+      <button class="btn" id="study">Studijski kit</button>
+      <button class="btn muted" id="cert">Sertifikat</button>
+      <button class="btn muted" id="curric">Kurikulum</button>
+      <button class="btn muted" id="eval">Eval</button>
+      <button class="btn muted" id="eval-llm">LLM eval</button>
+    </div>
+    <button class="btn" id="toggle">Označi kao naučeno</button>
+    <textarea id="note" placeholder="Beleška za brain (opciono)…"></textarea>
+    <button class="btn muted" id="save-note">Zapiši lekciju u brain</button>
+  </div>
+</aside>
+
+<div class="legend" id="legend">
+  <button class="lg" data-group="memorija" title="prikaži/sakrij teme"><i style="background:#5aa9ff"></i>tema</button>
+  <button class="lg" data-group="skill" title="prikaži/sakrij skillove"><i style="background:#ffab4a"></i>skill</button>
+  <button class="lg" data-group="izvori" title="prikaži/sakrij izvore"><i style="background:#c58cff"></i>izvor</button>
+  <span class="lg static"><i style="background:#46d38b"></i>naučeno</span>
+</div>
+<canvas id="mini" width="160" height="110" aria-label="mini mapa"></canvas>
+<div class="status" id="status">—</div>
+<div class="toast" id="toast"></div>
+
+<div class="modal" id="toolsModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2>Alati</h2>
+      <button class="x" id="toolsClose" aria-label="Zatvori">×</button>
+    </div>
+    <div class="modal-body">
+      <nav class="toolnav" id="toolnav"></nav>
+      <section class="toolpane" id="toolpane"></section>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="powersModal">
+  <div class="modal-box powers-box">
+    <div class="modal-head">
+      <h2>Moći</h2><span class="pcount" id="pcount"></span>
+      <button class="btn muted" id="healthRefresh" style="margin-right:8px;padding:4px 9px;font-size:11px" title="Provjeri žive usluge">Provjeri</button>
+      <button class="x" id="powersClose" aria-label="Zatvori">×</button>
+    </div>
+    <div class="powers-top">
+      <input id="pq" class="search mini" placeholder="Traži alat, hack, besplatno, novost…" autocomplete="off">
+      <div class="chips" id="pchips"></div>
+    </div>
+    <div class="powers-list" id="plist"></div>
+  </div>
+</div>
+
+<div class="modal" id="catalogModal">
+  <div class="modal-box powers-box">
+    <div class="modal-head">
+      <h2>Katalog</h2><span class="pcount" id="ccount"></span>
+      <button class="x" id="catalogClose" aria-label="Zatvori">×</button>
+    </div>
+    <div class="powers-top">
+      <input id="cq" class="search mini" placeholder="Traži skill/tool u katalogu (4498)…" autocomplete="off">
+      <div class="chips" id="cchips"></div>
+    </div>
+    <div class="powers-list" id="clist"></div>
+  </div>
+</div>
+
+<div class="modal" id="digestModal">
+  <div class="modal-box powers-box">
+    <div class="modal-head">
+      <h2>Digest</h2><span class="pcount" id="dcount"></span>
+      <button class="x" id="digestClose" aria-label="Zatvori">×</button>
+    </div>
+    <div class="powers-list" id="dbody" style="grid-template-columns:1fr"></div>
+  </div>
+</div>
+
+<div class="modal" id="streamModal">
+  <div class="modal-box" style="width:min(1200px,96vw);height:86vh;display:flex;flex-direction:column;padding:0">
+    <div class="modal-head" style="padding:12px 16px">
+      <h2>GAMA Stream</h2>
+      <a id="streamOpen" class="btn muted" href="#" target="_blank" rel="noopener" style="margin-left:auto;margin-right:8px;text-decoration:none">Otvori u tabu</a>
+      <button class="x" id="streamClose" aria-label="Zatvori">×</button>
+    </div>
+    <iframe id="streamFrame" title="GAMA Stream" style="flex:1;width:100%;border:0;background:#06080c"></iframe>
+  </div>
+</div>
+
+<div class="modal" id="tokensModal">
+  <div class="modal-box powers-box">
+    <div class="modal-head">
+      <h2>Tokeni</h2><span class="pcount" id="tcount"></span>
+      <button class="x" id="tokensClose" aria-label="Zatvori">×</button>
+    </div>
+    <div class="powers-top" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <input id="tokAgent" class="search mini" placeholder="agent (npr. opencode)" style="flex:1;min-width:120px">
+      <select id="tokRole">
+        <option value="read">read</option>
+        <option value="write">write</option>
+        <option value="admin">admin</option>
+      </select>
+      <button class="btn" id="tokAdd">Dodaj token</button>
+    </div>
+    <div class="chint" id="tokNew" style="padding:0 16px"></div>
+    <div class="powers-list" id="tokList" style="grid-template-columns:1fr"></div>
+    <div class="modal-head" style="border-top:1px solid var(--line)">
+      <h2 style="font-size:14px;margin:0">Audit</h2>
+    </div>
+    <div class="powers-list" id="auditList" style="grid-template-columns:1fr"></div>
+  </div>
+</div>
+
+<div class="modal" id="reviewModal">
+  <div class="modal-box powers-box">
+    <div class="modal-head">
+      <h2>Ponavljanje</h2><span class="pcount" id="rcount"></span>
+      <button class="x" id="reviewClose" aria-label="Zatvori">×</button>
+    </div>
+    <div class="powers-list" id="reviewList" style="grid-template-columns:1fr"></div>
+  </div>
+</div>
+
+<div class="modal" id="fleetModal">
+  <div class="modal-box powers-box">
+    <div class="modal-head">
+      <h2>Fleet</h2><span class="pcount" id="fcount"></span>
+      <button class="btn muted" id="fleetRefresh" style="margin-right:8px;padding:4px 9px;font-size:11px">Provjeri</button>
+      <button class="x" id="fleetClose" aria-label="Zatvori">×</button>
+    </div>
+    <div class="powers-list" id="fleetList" style="grid-template-columns:1fr"></div>
+  </div>
+</div>
+
+<div class="modal" id="benchModal">
+  <div class="modal-box powers-box">
+    <div class="modal-head">
+      <h2>Benchmark</h2><span class="pcount" id="bcount"></span>
+      <select id="benchK" style="margin-right:8px;padding:4px 6px;font-size:11px">
+        <option value="1">k=1</option><option value="2">k=2</option><option value="3">k=3</option>
+      </select>
+      <button class="btn muted" id="benchRun" style="margin-right:8px;padding:4px 9px;font-size:11px">Pokreni</button>
+      <button class="x" id="benchClose" aria-label="Zatvori">×</button>
+    </div>
+    <div class="powers-list" id="benchBody" style="grid-template-columns:1fr"></div>
+  </div>
+</div>
+
+<div class="modal" id="fixesModal">
+  <div class="modal-box powers-box">
+    <div class="modal-head">
+      <h2>Fixevi</h2><span class="pcount" id="fxcount"></span>
+      <button class="x" id="fixesClose" aria-label="Zatvori">×</button>
+    </div>
+    <div class="powers-list" id="fixBody" style="grid-template-columns:1fr"></div>
+  </div>
+</div>
+
+<div class="modal" id="liveModal">
+  <div class="modal-box powers-box">
+    <div class="modal-head">
+      <h2>Live</h2><span class="pcount" id="lcount"></span>
+      <button class="x" id="liveClose" aria-label="Zatvori">×</button>
+    </div>
+    <div class="powers-list" id="liveBody" style="grid-template-columns:1fr"></div>
+  </div>
+</div>
+
+<div class="modal" id="alertsModal">
+  <div class="modal-box powers-box">
+    <div class="modal-head">
+      <h2>Alerti</h2><span class="pcount" id="acount"></span>
+      <button class="btn muted" id="alertPerm" style="margin-right:8px;padding:4px 9px;font-size:11px">Uključi obavještenja</button>
+      <button class="x" id="alertsClose" aria-label="Zatvori">×</button>
+    </div>
+    <div class="powers-list" id="alertsList" style="grid-template-columns:1fr"></div>
+  </div>
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>

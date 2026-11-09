@@ -1,0 +1,44 @@
+{
+  "sources": [
+    {
+      "id": "learn-anything",
+      "label": "learn-anything.xyz",
+      "url": "https://learn-anything.xyz",
+      "sub": "Interaktivni graf tema — klik na pojam vodi ka resursima za učenje.",
+      "tags": "graf znanja ucenje knowledge graph explore topic map",
+      "built": "GAMA Learn graf — ovaj ekran (185 čvorova, klik = lekcija, praćenje naučenog)"
+    },
+    {
+      "id": "delphi-tools",
+      "label": "delphi.tools",
+      "url": "https://delphi.tools",
+      "sub": "Kolekcija malih, besplatnih alata koji rade u browseru bez naloga.",
+      "tags": "alati tools generator konverter qr pdf slike watermark subtitle",
+      "built": "Alati (T) — 12 lokalnih mini-alata: JSON, Base64, SHA-256, UUID, lozinke, regex, boje, Markdown…"
+    },
+    {
+      "id": "turbo-ai",
+      "label": "turbo.ai",
+      "url": "https://turbo.ai",
+      "sub": "Pretvara materijale za učenje u interaktivne aktivnosti i podkast.",
+      "tags": "podcast audio ucenje flashcards kviz study notes interactive",
+      "built": "Studijski kit + audio — sažetak, ključne tačke, kartice, kviz, MP3 (edge-tts, bs-BA-VesnaNeural)"
+    },
+    {
+      "id": "alison",
+      "label": "alison.com",
+      "url": "https://alison.com",
+      "sub": "Besplatni online kursevi sa sertifikatima i diplomama.",
+      "tags": "kursevi courses sertifikat certificate diploma learning plan",
+      "built": "Plan (P) — kurikulum 6 čvorova; Sertifikat — SVG za naučen čvor sa serijskim brojem"
+    },
+    {
+      "id": "sci-hub",
+      "label": "sci-hub.box",
+      "url": "https://sci-hub.box",
+      "sub": "Pristup naučnim radovima iza paywalla — nije legalno, pa nije integrisano.",
+      "tags": "naucni radovi papers research pdf paywall open access",
+      "built": "Nije integrisano (piraterija). Zamena: Istraži (R) — OpenAlex + arXiv, legalni izvori sa apstraktima i PDF linkovima"
+    }
+  ]
+}

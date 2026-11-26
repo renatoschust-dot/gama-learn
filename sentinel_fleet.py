@@ -33,19 +33,21 @@ HOST = socket.gethostname()
 TIMEOUT = 8.0
 FLEET_URL = (os.environ.get("GAMA_FLEET_URL") or "http://127.0.0.1:7200").rstrip("/")
 
-NODES = [
-    {"name": "contabo", "kind": "learn", "hc": "contabo", "hc_host": "127.0.0.1",
-     "base": os.environ.get("GAMA_LEARN_SELF") or "http://100.106.202.123:8078"},
-    {"name": "vmlab", "alias": "vastvm", "kind": "learn", "hc": "vastvm", "hc_host": "100.106.182.69",
-     "base": os.environ.get("GAMA_LEARN_VMLAB") or "http://100.106.182.69:8077"},
-    {"name": "oracle", "kind": "probe", "hc": "oracle", "hc_host": "100.96.186.2",
-     "checks": [("harness", "http://100.96.186.2:7125/health"),
-                ("engine", "http://100.96.186.2:8000/health"),
-                ("gateway", "http://100.96.186.2:8070/health")]},
-    {"name": "vast", "kind": "probe", "hc": "vast", "hc_host": "100.109.101.98",
-     "checks": [("engine", "http://100.109.101.98:8000/health"),
-                ("embed", "http://100.109.101.98:8090/health")]},
-]
+def _load_fleet():
+    """Fleet topology comes from a file, never from this repository.
+
+    Internal addresses (Tailscale/CGNAT, private subnets) must not be committed: they
+    describe the network and they only work inside it. Point GAMA_FLEET_FILE at your own
+    JSON list, see fleet.example.json for the shape.
+    """
+    path = os.environ.get("GAMA_FLEET_FILE", "").strip()
+    if not path:
+        raise SystemExit("GAMA_FLEET_FILE is not set; see fleet.example.json")
+    with open(path, "r", encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+NODES = _load_fleet()
 
 
 def _read(path, default):

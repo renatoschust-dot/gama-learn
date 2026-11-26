@@ -48,16 +48,16 @@ CATALOG_FILES = [
     "/opt/gamacode/workspace/gama_catalog/catalog.yaml",
     os.path.expanduser("~/C:/Users/User/Documents/Default Project/gama_catalog/catalog.yaml"),
 ]
+# Only loopback services are listed here. Anything on another host belongs in
+# GAMA_LEARN_CHECKS (a JSON list of the same shape): internal addresses must not be
+# committed to a public repository.
 HEALTH_CHECKS = [
-    {"id": "mvm", "type": "http", "url": "http://100.106.182.69:7110/health"},
-    {"id": "shard", "type": "http", "url": "http://100.106.182.69:7150/health"},
     {"id": "brain", "type": "http", "url": "http://127.0.0.1:8065/stats"},
     {"id": "harness-verify", "type": "http", "url": "http://127.0.0.1:7125/health"},
-    {"id": "gateway", "type": "http", "url": "http://100.96.186.2:8070/health"},
-    {"id": "engine", "type": "http", "url": "http://100.96.186.2:8000/health"},
     {"id": "fastd", "type": "http", "url": "http://127.0.0.1:8094/health"},
     {"id": "deep-research", "type": "http", "url": "http://127.0.0.1:8088/health"},
     {"id": "node", "type": "http", "url": "http://127.0.0.1:7200/health"},
+] + (json.loads(os.environ["GAMA_LEARN_CHECKS"]) if os.environ.get("GAMA_LEARN_CHECKS") else []) + [
     {"id": "catalog", "type": "path", "dynamic": "catalog"},
     {"id": "gama-run", "type": "path", "paths": ["/usr/local/bin/gama-run"]},
     {"id": "gamashell", "type": "path", "paths": ["/usr/local/bin/gamashell"]},
@@ -76,9 +76,9 @@ TOKEN = os.environ.get("GAMA_LEARN_TOKEN") or ""
 STREAM_URL = (os.environ.get("GAMA_STREAM_URL") or "").rstrip("/")
 HARNESS_URL = (os.environ.get("GAMA_HARNESS_URL") or "http://127.0.0.1:7125").rstrip("/")
 HARNESS_ENV = os.environ.get("GAMA_HARNESS_ENV") or "/etc/gama-harness.env"
-LLM_URL = (os.environ.get("GAMA_LLM_URL") or "http://100.109.101.98:8100/v1/chat/completions").rstrip("/")
+LLM_URL = (os.environ.get("GAMA_LLM_URL") or "http://127.0.0.1:8100/v1/chat/completions").rstrip("/")
 LLM_MODEL = os.environ.get("GAMA_LLM_MODEL") or "Qwen/Qwen2.5-7B-Instruct-AWQ"
-LLM_FALLBACK_URL = (os.environ.get("GAMA_LLM_FALLBACK_URL") or "http://100.96.186.2:8000/v1/chat/completions").rstrip("/")
+LLM_FALLBACK_URL = (os.environ.get("GAMA_LLM_FALLBACK_URL") or "").rstrip("/")
 LLM_FALLBACK_MODEL = os.environ.get("GAMA_LLM_FALLBACK_MODEL") or "deepseek-v4-flash"
 LLM_EVAL_FILE = os.path.join(STATE_DIR, "llm_eval.json")
 CATALOG_CACHE_FILE = os.path.join(STATE_DIR, "catalog_cache.json")
@@ -98,10 +98,11 @@ SENTINEL_FILE = os.path.join(STATE_DIR, "sentinel.json")
 SENTINEL_DEEP_FILE = os.path.join(STATE_DIR, "sentinel_deep.json")
 LIVE_FILE = os.path.join(STATE_DIR, "live.jsonl")
 FIXES_FILE = os.path.join(STATE_DIR, "fixes.json")
+# Fleet peers are configured, not committed: an internal address in a public
+# repository describes the network to anyone who reads it.
 FLEET_NODES = [
-    {"name": "contabo", "base": os.environ.get("GAMA_LEARN_SELF") or "http://100.106.202.123:8078"},
-    {"name": "vmlab", "base": os.environ.get("GAMA_LEARN_VMLAB") or "http://100.106.182.69:8077"},
-]
+    {"name": "self", "base": os.environ.get("GAMA_LEARN_SELF") or "http://127.0.0.1:8078"},
+] + (json.loads(os.environ["GAMA_LEARN_PEERS"]) if os.environ.get("GAMA_LEARN_PEERS") else [])
 _fleet_cache = {"t": 0.0, "data": None}
 
 STOP = set("""

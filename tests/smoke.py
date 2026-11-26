@@ -6,7 +6,9 @@ import time
 import urllib.parse
 import urllib.request
 
-BASE = (sys.argv[1] if len(sys.argv) > 1 else "http://100.106.202.123:8078").rstrip("/")
+BASE = (sys.argv[1] if len(sys.argv) > 1 else os.environ.get("GAMA_LEARN_API", "")).rstrip("/")
+if not BASE:
+    raise SystemExit("usage: smoke.py <base-url>   (or set GAMA_LEARN_API)")
 TOKEN = os.environ.get("GAMA_LEARN_TOKEN") or ""
 
 

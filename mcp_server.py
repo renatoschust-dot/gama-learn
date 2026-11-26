@@ -5,7 +5,7 @@ import sys
 import urllib.parse
 import urllib.request
 
-BASE = (os.environ.get("GAMA_LEARN_API") or "http://100.106.202.123:8078").rstrip("/")
+BASE = (os.environ.get("GAMA_LEARN_API") or "http://127.0.0.1:8078").rstrip("/")
 TOKEN = os.environ.get("GAMA_LEARN_TOKEN") or ""
 
 

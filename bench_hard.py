@@ -41,7 +41,7 @@ def jget(text):
 
 def skill_text(name):
     for p in (os.path.join(server.SKILL_DIR, name, "SKILL.md"),
-              os.environ.get("GAMA_SKILL_LIB", "/root/gama_skills_lib") + "/%s/SKILL.md" % name):
+              os.environ.get("GAMA_SKILL_LIB", os.path.expanduser("~/gama_skills_lib")) + "/%s/SKILL.md" % name):
         if os.path.isfile(p):
             return server._read_text(p, 6000)
     return ""

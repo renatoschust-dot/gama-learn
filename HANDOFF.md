@@ -21,8 +21,8 @@ systemctl restart gama-learn     # primarno (Restart=always)
 - Port **8078** (8077 je gama-stream web — NE dirati).
 - Brain lokalno: `http://127.0.0.1:8065`.
 - Log: `/tmp/gama_learn.log`; backup: `gama-learn-backup.timer` 03:30 (7 dana).
-- Test: `python3 tests/smoke.py http://100.106.202.123:8078` (9/9).
-- Fallback bez systemd: `python3 server.py --port 8078 --host 100.106.202.123`.
+- Test: `python3 tests/smoke.py "$GAMA_LEARN_API"` (9/9).
+- Fallback bez systemd: `python3 server.py --port 8078 --host 0.0.0.0`.
 - Bez zavisnosti (Python 3 stdlib). edge-tts je potreban samo za audio.
 
 ## Šta je unutra (v0.5)
@@ -109,7 +109,7 @@ screenshots/   # plan, study-kit, tools, research, sources, powers
   rekonstruisano iz `SKILL.md`, 6 kratkih opisa prošireno. Final: **710/710 PASS**,
   katalog **verified 711** (gama-ponuda se pojavljuje 2×), untested 4013.
   `results.json` je per-machine (gitignore).
-- vmlab `:8077` (pid 333809, bind `100.106.182.69`): graf 191/291, katalog 4571
+- vmlab `:8077` (pid 333809, bind `<vmlab>`): graf 191/291, katalog 4571
   (instalirano 96, **verified 110**, challenges_run 787); 79 vmlab-only challenge-a
   generisano lokalno (per-machine), svi lokalni skillovi PASS.
 - **Health (08.11.)**: Contabo `16/16 online`, 340 ms (mvm/shard ~330 ms preko
@@ -124,7 +124,7 @@ screenshots/   # plan, study-kit, tools, research, sources, powers
 - **P6 (08.11.)**: mobilni — pinch zoom + touch pan, `touch-action:none`, responzivan
   header i full-screen modali; `node --check` OK (nije testirano na uređaju).
 - **P7 (08.11.)**: Stream — `/api/version.stream` iz `GAMA_STREAM_URL`; Contabo
-  `http://100.106.202.123:8077` (SimpleHTTP, bez X-Frame-Options → iframe radi);
+  `http://<contabo>:8077` (SimpleHTTP, bez X-Frame-Options → iframe radi);
   dugme skriveno kad env nije postavljen (vmlab).
 - **P8 (08.11.)**: multi-agent tokeni — test: open graph 200; bez tokena 401;
   read graph 200 / POST 403 `read-only`; write learned 200 (agent iz tokena
@@ -226,7 +226,7 @@ screenshots/   # plan, study-kit, tools, research, sources, powers
    `gama-learn-digest.timer` (08:00) upisuje sažetak u brain.
 6. ~~**Brain integracija**~~ ✔ — „naučeno“ upisuje `kind=lesson` sa dokazom
    (challenge PASS/FAIL/SKIP + ref + ts).
-7. ~~**Stream**~~ ✔ — `GAMA_STREAM_URL` (Contabo `http://100.106.202.123:8077`)
+7. ~~**Stream**~~ ✔ — `GAMA_STREAM_URL` (Contabo `http://<contabo>:8077`)
    → dugme **Stream** sa iframe modalom + „Otvori u tabu“; bez env-a skriveno.
 8. ~~**Multi-agent**~~ ✔ — `state/tokens.json` (read/write/admin); read token
    blokira POST (403 read-only), write token ne može `/api/tokens`; agent se

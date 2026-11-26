@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euo pipefail
-BASE="${GAMA_LEARN_API:-http://100.106.202.123:8078}"
+BASE="${GAMA_LEARN_API:?set GAMA_LEARN_API (no internal address is committed)}"
 TOK="${GAMA_LEARN_TOKEN:-}"
 URL="$BASE/api/eval/tools?run=1"
 if [ -n "$TOK" ]; then

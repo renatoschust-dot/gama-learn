@@ -2,7 +2,7 @@
 set -euo pipefail
 umask 077
 SRC="${GAMA_LEARN_STATE:-/opt/gama_learn/state}"
-DST="${GAMA_LEARN_BACKUP_DIR:-/root/gama-backups/gama-learn}"
+DST="${GAMA_LEARN_BACKUP_DIR:?set GAMA_LEARN_BACKUP_DIR}"
 BASE="$(dirname "$SRC")"
 NAME="$(basename "$SRC")"
 mkdir -p "$DST"

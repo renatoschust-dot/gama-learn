@@ -4,7 +4,9 @@ import os
 import urllib.parse
 import urllib.request
 
-API = os.environ.get("GAMA_LEARN_API") or "http://100.106.202.123:8078"
+API = os.environ.get("GAMA_LEARN_API") or ""
+if not API:
+    raise SystemExit("set GAMA_LEARN_API (no internal address is committed)")
 BRAIN = os.environ.get("GAMA_BRAIN_URL") or "http://127.0.0.1:8065"
 TOKEN = os.environ.get("GAMA_LEARN_TOKEN") or ""
 

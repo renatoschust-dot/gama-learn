@@ -1,0 +1,21 @@
+[
+  {
+    "name": "self",
+    "kind": "learn",
+    "hc": "self",
+    "hc_host": "127.0.0.1",
+    "base": "http://127.0.0.1:8078"
+  },
+  {
+    "name": "probe",
+    "kind": "probe",
+    "hc": "probe",
+    "hc_host": "192.0.2.10",
+    "checks": [
+      [
+        "harness",
+        "http://192.0.2.10:7125/health"
+      ]
+    ]
+  }
+]
